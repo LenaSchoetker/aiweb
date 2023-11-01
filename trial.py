@@ -59,7 +59,7 @@ def crawler(start_url, base_url, server_domain):
             
             # Find and add internal links (those on the same server) to the list
             parsed_url = urlparse(current_url)
-            base_url = '/'.join(current_url.split('/')[:-1])  # Get the base URL
+            #base_url = '/'.join(current_url.split('/')[:-1])  # Get the base URL
 
             for link in soup.find_all('a'):
                 href = link.get('href')
