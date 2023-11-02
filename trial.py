@@ -2,71 +2,67 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 
-"""def is_internal_link(url, base_url):
-    # Check if the URL is an internal link (within the same server)
-    # Returns True or False
-    return base_url in url"""
-
 def get_internal_links(soup, base_url):
     # Find and return all internal links on the page
     internal_links = []
     for link in soup.find_all("a"):
-        #print(link)
         href = link.get("href")
-        #print(href)
-        if href and (base_url in href): #is_internal_link(href, base_url):
+        if href and (base_url in href):
             internal_links.append(href)
     return internal_links
 
+def crawl(start_url, base_url, server_domain):
+    # Initialize a set to keep track of visited pages
+    visited = set()
+    # Create a stack to store links to visit
+    stack = [start_url]
 
-def crawler(start_url, base_url, server_domain):
-    visited = set()  # list to keep track of visited pages
-    stack = [start_url]  # Stack to store links to visit
-
-    while stack: #links available on this page or more branches available to follow
+    while stack:
         current_url = stack.pop()
 
-        # If page visited before, continue
+        # If the page has been visited before, skip it
         if current_url in visited:
             continue
 
         response = requests.get(current_url)
+
+        # Check if the response is an HTML page
         if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
-            
-            
             soup = BeautifulSoup(response.content, 'html.parser')
 
-            
-            #get content
+            # Process the page (e.g., extract the title)
             title_tag = soup.title
             if title_tag:
-                print("Title:", title_tag.text)            
-                #title_tag.text #text content of a Tag
+                print("Title:", title_tag.text)
 
-            #analyze page, update index
-
-            # update visited list
-            visited.add(current_url) 
+            # Mark the current page as visited
+            visited.add(current_url)
+            
+            # Get internal links on the page
             internal_links = get_internal_links(soup, base_url)
             for link in internal_links:
                 stack.append(link)
 
+            # Find and add more internal links from anchor tags
             for link in soup.find_all('a'):
                 href = link.get('href')
                 if href:
                     absolute_link = urljoin(start_url, href)
                     parsed_url = urlparse(absolute_link)
 
+                    # Check if the link belongs to the same server and hasn't been visited
                     if parsed_url.netloc == server_domain and absolute_link not in visited:
                         stack.append(absolute_link)
 
-            print(visited)
         else:
             print(f"Error: Failed to fetch the page. Status code: {response.status_code}, URL: {current_url}")
 
+if __name__ == '__main__':
+    # Test the crawler with the provided URL
+    start_url = "https://vm009.rz.uos.de/crawl/index.html"
+    base_url = "https://vm009.rz.uos.de/crawl"
+    server_domain = "vm009.rz.uos.de"
+    crawl(start_url, base_url, server_domain)
 
-# Test with given URL
-start_url = "https://vm009.rz.uos.de/crawl/index.html"
-base_url = "https://vm009.rz.uos.de/crawl"
-server_domain = "vm009.rz.uos.de"
-crawler(start_url, base_url, server_domain)
+
+
