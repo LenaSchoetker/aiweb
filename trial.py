@@ -20,7 +20,7 @@ def get_internal_links(soup, base_url):
 
 
 def crawler(start_url, base_url, server_domain):
-    visited = []  # list to keep track of visited pages
+    visited = set()  # list to keep track of visited pages
     stack = [start_url]  # Stack to store links to visit
 
     while stack: #links available on this page or more branches available to follow
@@ -32,10 +32,6 @@ def crawler(start_url, base_url, server_domain):
 
         response = requests.get(current_url)
         if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
-            
-            if "text/html" not in response.headers.get("Content-Type"):
-                print(f"Skipping non-HTML content at {current_url}")
-                continue
             
             
             soup = BeautifulSoup(response.content, 'html.parser')
@@ -50,16 +46,10 @@ def crawler(start_url, base_url, server_domain):
             #analyze page, update index
 
             # update visited list
-            visited.append(current_url)
-
-            # Find and add internal links to the stack
-            """internal_links = get_internal_links(soup, base_url)
+            visited.add(current_url) 
+            internal_links = get_internal_links(soup, base_url)
             for link in internal_links:
-                stack.append(link)"""
-            
-            # Find and add internal links (those on the same server) to the list
-            parsed_url = urlparse(current_url)
-            #base_url = '/'.join(current_url.split('/')[:-1])  # Get the base URL
+                stack.append(link)
 
             for link in soup.find_all('a'):
                 href = link.get('href')
@@ -68,9 +58,9 @@ def crawler(start_url, base_url, server_domain):
                     parsed_url = urlparse(absolute_link)
 
                     if parsed_url.netloc == server_domain and absolute_link not in visited:
-                        visited.append(absolute_link)
-                        crawler(absolute_link, base_url, server_domain)
+                        stack.append(absolute_link)
 
+            print(visited)
         else:
             print(f"Error: Failed to fetch the page. Status code: {response.status_code}, URL: {current_url}")
 
