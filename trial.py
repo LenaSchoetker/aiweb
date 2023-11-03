@@ -96,7 +96,7 @@ def crawl(start_url, base_url, server_domain):
         if current_url in visited:
             continue
 
-        response = requests.get(current_url)
+        response = requests.get(current_url, timeout=3)
 
         if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
             soup = BeautifulSoup(response.content, 'html.parser')
