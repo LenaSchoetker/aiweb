@@ -5,6 +5,8 @@ import re
 from whoosh.index import create_in
 from whoosh.fields import *
 from whoosh.qparser import QueryParser
+from myapp import Flask, request
+from crawler_whoosh import crawl
 
 # Define a function to extract words from text
 def extract_words(text):
