@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import re
+from whoosh.index import create_in
+from whoosh.fields import *
 
 # Define a function to extract words from text
 def extract_words(text):

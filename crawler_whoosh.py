@@ -2,6 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import re
+from whoosh.index import create_in
+from whoosh.fields import *
+from whoosh.qparser import QueryParser
 
 # Define a function to extract words from text
 def extract_words(text):
@@ -22,7 +25,10 @@ def crawl(start_url, base_url, server_domain):
     stack = [start_url]
 
     # Create an index to store words and corresponding URLs
-    index = {}
+    schema = Schema(title=TEXT(stored=True), content=TEXT)
+    # Create an index in the directory indexdr (the directory must already exist!)
+    ix = create_in("indexdir", schema)
+    writer = ix.writer()
 
     while stack:
         current_url = stack.pop()
@@ -33,7 +39,8 @@ def crawl(start_url, base_url, server_domain):
         response = requests.get(current_url, timeout=3)
 
         if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
-            soup = BeautifulSoup(response.content, 'html.parser')
+            #soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.text, 'html.parser') #?
 
             # Process the page
             title_tag = soup.title
@@ -42,14 +49,8 @@ def crawl(start_url, base_url, server_domain):
 
             # Extract words from the page's text content
             page_text = soup.get_text()
-            words = extract_words(page_text)
-
-            # Update the index with words and the current URL
-            for word in words:
-                if word in index:
-                    index[word].append(current_url)
-                else:
-                    index[word] = [current_url]
+            #words = extract_words(page_text)
+            writer.add_document(title=title_tag.text, content=page_text)
 
             visited.add(current_url)
             
@@ -69,29 +70,9 @@ def crawl(start_url, base_url, server_domain):
         else:
             print(f"Error: Failed to fetch the page. Status code: {response.status_code}, URL: {current_url}")
 
-    return index  # Return the index when crawling is complete
+    writer.commit()
+    return ix  # Return the index when crawling is complete
 
-
-def search(index, words):
-    matching_urls = None
-    
-    # Ensure all words are in lowercase for consistency
-    words = [word.lower() for word in words]
-    
-    for word in words:
-        if word in index:
-            if matching_urls is None:
-                matching_urls = set(index[word])
-            else:
-                matching_urls = matching_urls.intersection(index[word])
-
-    # Ensure that the matching URLs contain all the specified words
-    for url in list(matching_urls):
-        url_words = [word.lower() for word in extract_words(requests.get(url).text)]
-        if not all(word in url_words for word in words):
-            matching_urls.remove(url)
-
-    return list(matching_urls) if matching_urls is not None else []
 
 if __name__ == '__main__':
     start_url = "https://vm009.rz.uos.de/crawl/index.html"
@@ -99,18 +80,19 @@ if __name__ == '__main__':
     server_domain = "vm009.rz.uos.de"
     
     # Run the crawler and get the index
-    index = crawl(start_url, base_url, server_domain)
+    ix = crawl(start_url, base_url, server_domain)
     
     # Test the search function with a list of words
     search_words = ["platypus", "sewn"]  # Replace with your search words
-    matching_urls = search(index, search_words)
     
-    # Print the URLs that match the search criteria
-    if matching_urls:
-        print("Matching URLs:")
-        for url in matching_urls:
-            print(url)
-    else:
-        print("No matching URLs found.")
+    # Retrieving data
+    with ix.searcher() as searcher:
+        # find entries with the words 
+        query = QueryParser("content", ix.schema).parse(" ".join(search_words))
+        results = searcher.search(query)
+        
+        # print all results
+        for r in results:
+            print(r)
 
 
