@@ -8,7 +8,7 @@ from whoosh.index import create_in, open_dir
 from whoosh.fields import *
 from whoosh.qparser import QueryParser
 from flask import Flask, request, render_template 
-#from crawler_whoosh import crawl
+import crawler_whoosh
 
 
 
@@ -23,40 +23,38 @@ def start():
 
 @app.route("/search")
 def search():
-    """    # Get the search query parameter 'q' from the URL
-    search_query = request.args.get('q')
-
-    # Create a search query parser
-    query_parser = QueryParser("content", ix.schema)
-
-    # Parse the search query
-    query = query_parser.parse(search_query)
-
-    # Search the index and get the results
-    with ix.searcher() as searcher:
-        results = searcher.search(query)
-
-    # Return the search results as an HTML page
-    return render_template('search_results.html', results=results)"""
-    
     # Get the search query parameter 'q' from the URL
     search_query = request.args.get('q')
 
-    # Create a search query parser
-    query_parser = QueryParser("content", ix.schema)
-
-    # Parse the search query
-    query = query_parser.parse(search_query)
-    
     # Initialize an empty list to store the results
-    results = []
+    results_list = []
 
-    # Search the index and get the results
+    # Retrieving data
     with ix.searcher() as searcher:
-        results = list(searcher.search(query))  # Store results in the list # Store results in a list
+        # find entries with the words 
+        query = QueryParser("content", ix.schema).parse(search_query)
+        print("no", query)
+        results = searcher.search(query)
+        print("yes", results)
 
-    # Return the search results as a plain text response
-    result_text = "\n".join([f"{result['title']} - {result['url']}" for result in results])
-    return f"Search Results:\n{result_text}"
+        # Build a list of dictionaries containing relevant information
+        for r in results:
+            result_dict = {'title': r['title'], 'url': r['url']}
+            print("yes", result_dict)
+            results_list.append(result_dict)
+    
+    for r in results_list:
+        print(f"Title: {r['title']} - URL: {r['url']}")
+    if results_list == []:
+        return "<h1>No results found</h1>"
+    
+    # Generate HTML content with clickable links
+    html_content = "<h1>Search Results</h1>"
+    html_content += "<ul>"
+    for result in results_list:
+        html_content += f"<li><strong>Title:</strong> {result['title']}<br><strong>URL:</strong> <a href='{result['url']}'>{result['url']}</a></li>"
+    html_content += "</ul>"
 
+    # Return the HTML content as a response
+    return html_content
 
