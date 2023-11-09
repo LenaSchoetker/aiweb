@@ -8,12 +8,6 @@ from whoosh.qparser import QueryParser
 from myapp import Flask, request
 from crawler_whoosh import crawl
 
-# Define a function to extract words from text
-def extract_words(text):
-    # Use regular expressions to extract words (you can customize the pattern)
-    words = re.findall(r'\w+', text.lower())
-    return words
-
 def get_internal_links(soup, base_url):
     internal_links = []
     for link in soup.find_all("a"):
@@ -41,8 +35,7 @@ def crawl(start_url, base_url, server_domain):
         response = requests.get(current_url, timeout=3)
 
         if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
-            #soup = BeautifulSoup(response.content, 'html.parser')
-            soup = BeautifulSoup(response.text, 'html.parser') #?
+            soup = BeautifulSoup(response.text, 'html.parser') 
 
             # Process the page
             title_tag = soup.title
@@ -51,7 +44,6 @@ def crawl(start_url, base_url, server_domain):
 
             # Extract words from the page's text content
             page_text = soup.get_text()
-            #words = extract_words(page_text)
             writer.add_document(title=title_tag.text, content=page_text)
 
             visited.add(current_url)
