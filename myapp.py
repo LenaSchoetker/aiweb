@@ -1,14 +1,7 @@
-# myapp.py
-
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse, urljoin
-import re
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
 from whoosh.qparser import QueryParser
-from flask import Flask, request, render_template 
-import crawler_whoosh
+from flask import Flask, request
 
 
 

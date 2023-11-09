@@ -1,11 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
-import re
 from whoosh.index import create_in
 from whoosh.fields import *
 from whoosh.qparser import QueryParser
-from myapp import Flask, request
 
 def get_internal_links(soup, base_url):
     internal_links = []
