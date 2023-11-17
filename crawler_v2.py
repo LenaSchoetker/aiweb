@@ -31,7 +31,7 @@ def extract_urls(found_url:list, base_url:str)-> list:
             continue
 
         #case 1: url is absolute,
-        if url.startswith('http'): #TODO: Naja, ne
+        if url.startswith('http'): 
             list.append(url)
 
         #Case 2 url is relative (everything after domainending)
