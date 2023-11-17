@@ -89,7 +89,6 @@ def crawl(url:str) -> None:
                 soup = bs4.BeautifulSoup(r.content, 'html.parser') #parse the content of the website
                 soup_text = re.sub(r'[^a-zA-Z0-9\s]', '', soup.text.lower()) #remove special characters and make everything lowercase
 
-                #TODO: find language of website
                 stop_words = stopwords.words('english')
 
                 #Tokenize the text   
