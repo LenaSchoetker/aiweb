@@ -4,7 +4,6 @@ from whoosh.qparser import QueryParser
 from flask import Flask, request
 
 
-
 app = Flask(__name__)
 
 # Load the Whoosh index
