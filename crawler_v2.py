@@ -77,8 +77,9 @@ def crawl(url:str) -> None:
 
             if r.status_code == 200:
                 soup = bs4.BeautifulSoup(r.content, 'html.parser') #parse the content of the website
+                print(soup.body.get_text(separator=' '))
 
-                writer.add_document(title= soup.title.text, content=soup.get_text(), url=current_url) #add the document to the index
+                writer.add_document(title= soup.title.text, content=soup.body.get_text(separator=' '), url=current_url) #add the document to the index
 
                 new_urls = soup.findAll('a') #find all links on the website
 
