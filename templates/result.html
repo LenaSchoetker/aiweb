@@ -10,14 +10,14 @@
        background-color: rgb(10, 84, 79);
        text-align: left;
        margin-right: 50px;
-       font-family: 'Arial', 'bold';
+       font-family: 'Arial';
        color: #ffffff;
        text-size-adjust: 50px;
 
        .custom-header {
             color: rgb(255, 176, 29);
             font-size: 15px;
-            font-family: 'Arial', 'bold';
+            font-family: 'Arial';
             margin-right: 50px;
             text-align: left;
             display: flex;
@@ -52,15 +52,16 @@
     
    
     <p>Search Results for '{{ query }}'</p>
-    <ul class="list-group">    
-        {% for item in results %}
-            <li class="list-group-item"><strong>{{ item['title'] }}</strong><br> 
-                <a href='{{ item["url"] }}'>{{ item['url'] }}</a> <br>
-                <p>{{ item['content'][:200] }}
-                </p>
-            </li>
-        {% endfor %}
-    </ul>
+
+<ul>    
+    {% for item in results %}
+        <li>
+            <strong>{{ item['title'] }}</strong><br> 
+            <a href='{{ item["url"] }}'>{{ item['url'] }}</a> <br>
+            <p>{{ item['content']|safe }}</p>
+        </li>
+    {% endfor %}
+</ul>
     <script src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 import re
 from flask import Flask, request, render_template
-from crawler_v2 import search as whoosh_search
+from crawlerv2 import search as whoosh_search
 
 #TODO: highlight search words in results
 #TODO: nicer way to show content of results
