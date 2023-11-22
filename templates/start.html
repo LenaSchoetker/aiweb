@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <meta name="viewport">
+    <title>Homepage</title>
+    <link rel = "stylesheet" href="{{url_for('static', filename='style.css')}}">
+</header>	
+<body>
+    <h1>PlayTypus</h1>
+    <p>Enter a term to search for:</p>
+    <form action="search" method="GET">
+        <input type="text" name="q" />
+    </form>
+
+</html>
