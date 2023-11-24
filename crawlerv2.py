@@ -10,6 +10,8 @@ from whoosh.fields import Schema, TEXT
 from whoosh.qparser import QueryParser
 from whoosh import scoring
 from whoosh import highlight
+from whoosh.query import Term
+
 
 
 def extract_urls(found_url:list, base_url:str)-> list:
@@ -104,8 +106,19 @@ def search(query:str) -> list:
     out = []
     
     with index.searcher() as searcher:
+        corrector = searcher.corrector("content")
+
         p_query = QueryParser("content", index.schema).parse(query)
         querylist = query.split()
+
+        # Extract terms from the parsed query
+        terms = p_query.all_terms()
+
+        # Replace each term with its most similar index entry
+        for term in terms:
+            corrected_term = corrector.suggest(term[1], limit=1)[0]
+            p_query = p_query.replace("content", term[1], corrected_term)  # Replace the term with a new Term object
+      
         result = searcher.search(p_query, terms = True)
         #sort result by how often the search terms are mentioned
         result = sorted(result, key=lambda x: sum(x['content'].lower().count(q) for q in querylist), reverse=True)
@@ -130,6 +143,6 @@ if __name__ == '__main__':
 
     crawl('https://vm009.rz.uos.de/crawl/index.html')  
 
-    query = "unicorn"
+    query = "uncorn"
 
     result = search(query)
