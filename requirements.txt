@@ -8,3 +8,4 @@ urllib3==2.0.7
 whoosh
 re
 flask
+nltk
