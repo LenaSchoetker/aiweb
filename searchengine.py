@@ -1,6 +1,7 @@
 import re
 from flask import Flask, request, render_template
 from crawlerv2 import search as whoosh_search
+import traceback
 
 #TODO: highlight search words in results
 #TODO: nicer way to show content of results
@@ -25,3 +26,7 @@ def search():
             #TODO: download image instead of including link
     return render_template("result.html", results=r, query=query)
 
+
+@app.errorhandler(500)
+def internal_error(exception):
+   return "<pre>"+traceback.format_exc()+"</pre>"
