@@ -2,22 +2,49 @@
 <html>
   <head>
     <title>Search Results</title>
-    <link rel = "stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <style>
+      body {
+       background-color: rgb(10, 84, 79);
+       text-align: left;
+       margin-right: 50px;
+       font-family: 'Arial';
+       color: #ffffff;
+       text-size-adjust: 50px;
+
+       .custom-header {
+            color: rgb(255, 176, 29);
+            font-size: 15px;
+            font-family: 'Arial';
+            margin-right: 50px;
+            text-align: left;
+            display: flex;
+            margin-right: 50px;
+            align-items: center;
+        }
+         .c-title{
+        margin-right: 20px; 
+    }
+    a {
+      color: #ffd500; /* You can use a color name, hex code, or other valid color values */
+    }
+   }
+   </style>
   </head>
   <body>
-    <p>Enter another term to search for:</p>
-    <form action="search" method="GET">
-        <input type="text" name="q" />
-    </form>
-    <h1>Search Results for '{{ query }}'</h1>
-    <ul>    
-        {% for item in results %}
-            <li><strong>{{ item['title'] }}</strong><br> 
-                <a href='{{ item["url"] }}'>{{ item['url'] }}</a> <br>
-                <p>{{ item['content'][:200] }}
-                </p>
-            </li>
-        {% endfor %}
-    </ul>
+    
+   
+    <p>Search Results for '{{ query }}'</p>
+
+<ul>    
+    {% for item in results %}
+        <li>
+            <strong>{{ item['title'] }}</strong><br> 
+            <a href='{{ item["url"] }}'>{{ item['url'] }}</a> <br>
+            <p>{{ item['content']|safe }}</p>
+        </li>
+    {% endfor %}
+</ul>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
   </body>
 </html>

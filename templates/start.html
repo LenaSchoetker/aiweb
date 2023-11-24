@@ -3,13 +3,64 @@
 <header>
     <meta name="viewport">
     <title>Homepage</title>
-    <link rel = "stylesheet" href="{{url_for('static', filename='style.css')}}">
-</header>	
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <style>
+           body {
+            background-color: rgb(10, 84, 79);
+            text-align: center;
+            font-family: 'Arial', 'bold';
+            color: #ffffff;
+            text-size-adjust: 50px;
+        }
+        /* Custom styles for the header */
+        .custom-header {
+            color: rgb(255, 176, 29);
+            font-size: 20px;
+            font-family: 'Arial', 'bold';
+            text-align: center;
+        }
+        .centered-picture {
+            display: block;
+            margin: auto;
+            max-width: 50%; /* Adjust the max-width as needed */
+            height: auto;
+            max-height: 400px;
+            margin-top: 20px; /* Add space between title and picture */
+            
+        }
+
+           /* Custom styles for the search form */
+           .search-form {
+            text-align: right;
+            margin-bottom: 15px; /* Add padding between button and search bar */
+        }
+
+        /* Additional style for the search label */
+        .search-label {
+            font-size: 18px;
+            color: #848282;
+        }
+
+       
+
+        /* Increase the size of the search button */
+        .btn-search {
+            height: 40px; /* Adjust the height as needed */
+        }
+    </style>
+</head>	
+
 <body>
     <h1>PlayTypus</h1>
     <p>Enter a term to search for:</p>
-    <form action="search" method="GET">
-        <input type="text" name="q" />
-    </form>
-
+    <div class="container mt-3">
+            
+                <form action="search" method="GET" class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="...">
+                      
+                    </div>
+                </form>
+    </div>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
 </html>
