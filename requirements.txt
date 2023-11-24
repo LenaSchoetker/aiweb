@@ -8,5 +8,5 @@ urllib3==2.0.7
 nltk
 whoosh
 flask
-re
 traceback
+regex
