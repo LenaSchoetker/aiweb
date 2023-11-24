@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <style>
+      body {
+       background-color: rgb(10, 84, 79);
+       text-align: left;
+       margin-right: 50px;
+       font-family: 'Arial', 'bold';
+       color: #ffffff;
+       text-size-adjust: 50px;
+
+       .custom-header {
+            color: rgb(255, 176, 29);
+            font-size: 15px;
+            font-family: 'Arial', 'bold';
+            margin-right: 50px;
+            text-align: left;
+            display: flex;
+            margin-right: 50px;
+            align-items: center;
+        }
+         .c-title{
+        margin-right: 20px; 
+    }
+  
+    .centered-picture {
+            display: block;
+            margin: auto;
+            max-width: 50%; /* Adjust the max-width as needed */
+            height: auto;
+            max-height: 400px;
+            margin-top: 20px; /* Add space between title and picture */
+            
+        }
+   }
+   .c-header{
+    text-align: center;
+   }
+   </style>
+  </head>
+  <header class="custom-header">
+    <h1 class = c-title>PlaTypus</h1>
+
+    <div class="container mt-3">
+            
+      <form action="search" method="GET" class="form-inline">
+          <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="search again..">
+            
+          </div>
+      </form>
+</div>
+   
+   </header>
+
+  <body>
+    
+   
+    <h1 class=c-header>Nothing fitting to be found :( </h1> <br>
+    <img src="static\sad-platypus.png" alt="Sad platypus" class="centered-picture">
+
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  </body>
+</html>
