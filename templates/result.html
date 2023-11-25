@@ -1,76 +1,74 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
     <style>
-      body {
-        background-color: rgb(10, 84, 79);
-        text-align: left; /* Center the text */
-        font-family: 'Arial';
-        color: #ffffff;
-        margin: 20px; /* Remove default margin */
-        padding: 20px; /* Remove default padding */
-      }
+        body {
+            background-color: rgb(10, 84, 79);
+            text-align: left;
+            font-family: 'Arial';
+            color: #ffffff;
+            margin: 20px;
+            padding: 0;
+        }
 
-      .custom-header {
-        color: rgb(255, 176, 29);
-        font-size: 15px;
-        font-family: 'Arial';
-        display: flex;
-        flex-direction: column; /* Arrange children in a column */
-        align-items: center;
-        justify-content: center;
-        margin-top: 20px; /* Add space on the top */
-        margin-bottom: 20px; /* Add space on the bottom */
-      }
+        .custom-header {
+            color: rgb(255, 176, 29);
+            font-size: 15px;
+            font-family: 'Arial';
+            margin: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-      .c-title {
-        margin-right: 20px;
-      }
+        .c-title {
+            margin-right: 20px;
+        }
 
-      a {
-        color: #ffd500;
-      }
+        a {
+            color: #ffd500;
+        }
 
-      form {
-        margin-top: 20px; /* Add space on the top of the form */
-      }
-
-      p {
-        margin-left: 20px;
-      }
+        p {
+            margin-left: 20px;
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
 
     <header class="custom-header">
-      <h1 class=c-title>PlaTypus</h1>
+        <h1 class=c-title>PlaTypus</h1>
 
-      <div class="container mt-3">
+        <div class="container mt-3">
 
-        <form action="search" method="GET" class="form-inline">
-          <div class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="search again..">
-          </div>
-        </form>
-      </div>
+            <form action="search" method="GET" class="form-inline">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="search again..">
+                </div>
+            </form>
+        </div>
     </header>
 
     <p>Search Results for '{{ query }}'</p>
 
     <ul>
-      {% for item in results %}
-      <li>
-        <strong>{{ item['title'] }}</strong><br>
-        <a href='{{ item["url"] }}'>{{ item['url'] }}</a> <br>
-        <p>{{ item['content']|safe }}</p>
-      </li>
-      {% endfor %}
+        {% for item in results %}
+        <li>
+            <strong>{{ item['title'] }}</strong><br>
+            <a href='{{ item["url"] }}'>{{ item['url'] }}</a> <br>
+            <p>{{ item['content']|safe }}</p>
+        </li>
+        {% endfor %}
     </ul>
     <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-  </body>
+</body>
+
 </html>
