@@ -1,4 +1,3 @@
-import re
 from flask import Flask, request, render_template
 from crawlerv2 import search as whoosh_search
 import traceback
