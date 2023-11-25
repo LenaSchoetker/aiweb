@@ -3,10 +3,6 @@ from flask import Flask, request, render_template
 from crawlerv2 import search as whoosh_search
 import traceback
 
-#TODO: highlight search words in results
-#TODO: nicer way to show content of results
-#TODO: order results?
-#TODO: bootstrap
 
 app = Flask(__name__)
 
@@ -23,7 +19,6 @@ def search():
 
     if r == []:
         return render_template("error.html")
-            #TODO: download image instead of including link
     return render_template("result.html", results=r, query=query)
 
 
