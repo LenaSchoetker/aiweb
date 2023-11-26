@@ -116,7 +116,11 @@ def search(query:str) -> list:
 
         # Replace each term with its most similar index entry
         for term in terms:
-            corrected_term = corrector.suggest(term[1], limit=1)[0]
+            corrected_term = corrector.suggest(term[1], limit=1)
+            if not corrected_term:
+                # Handle the case when there are no suggestions
+                return []
+            corrected_term = corrected_term[0]
             p_query = p_query.replace("content", term[1], corrected_term)  # Replace the term with a new Term object
       
         result = searcher.search(p_query, terms = True)
