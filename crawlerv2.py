@@ -1,6 +1,5 @@
 import bs4
 import requests
-import nltk
 import re
 
 from whoosh.index import create_in, Index, open_dir
@@ -37,12 +36,12 @@ def extract_urls(found_url:list, base_url:str)-> list:
         if url.startswith('http'): #not perfect since it only allows for http and https
             list.append(url)
 
-        #Case 2 url is relative (everything after domainending)
+        #case 2: url is relative (everything after domainending)
         elif url.startswith('/'):
             match = re.match(r'^https?://[^/]+', base_url).group(0) #return everthing until the domain ending 
             list.append(match + url) # url is E.g /startseite/
 
-        #case 3 url is relative (only extension to path or needs to replace the current path (after last /)) E.g. #c251337
+        #case 3: url is relative (only extension to path or needs to replace the current path (after last /)) E.g. #c251337
         else:
             list.append(base_url.rsplit("/", 1)[0] +"/" + url)
 
