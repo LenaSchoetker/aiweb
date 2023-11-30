@@ -1,21 +1,18 @@
 import bs4
 import requests
-import nltk
-from nltk.corpus import stopwords
 import re
 
 from whoosh.index import create_in, Index, open_dir
 from whoosh.fields import Schema, TEXT
 
 from whoosh.qparser import QueryParser
-from whoosh import scoring
 from whoosh import highlight
-from whoosh.query import Term
-
 
 
 def extract_urls(found_url:list, base_url:str)-> list:
-    """format the urls found on the website to absolute urls and return them as a list of strings, which will be added to the stack
+    """format the urls found on the website to absolute urls and return them as a list of strings, which will be added to the stack.
+    (While crawling the uos.de website, I noticed that some urls are relative and some are absolute. This function makes sure that all urls are absolute.
+     For the Platypus website, this function is not needed, because all urls are absolute.)
 
     Args:
         found_url (list): the urls found on the current website
@@ -36,22 +33,29 @@ def extract_urls(found_url:list, base_url:str)-> list:
             continue
 
         #case 1: url is absolute,
-        if url.startswith('http'): 
+        if url.startswith('http'): #not perfect since it only allows for http and https
             list.append(url)
 
-        #Case 2 url is relative (everything after domainending)
+        #case 2: url is relative (everything after domainending)
         elif url.startswith('/'):
             match = re.match(r'^https?://[^/]+', base_url).group(0) #return everthing until the domain ending 
             list.append(match + url) # url is E.g /startseite/
 
-        #case 3 url is relative (only extension to path or needs to replace the current path (after last /)) E.g. #c251337
+        #case 3: url is relative (only extension to path or needs to replace the current path (after last /)) E.g. #c251337
         else:
-            #print("3",base_url.rsplit("/", 1)[0] + url)
             list.append(base_url.rsplit("/", 1)[0] +"/" + url)
 
     return list
 
-def crawl(url:str) -> None:
+def crawl(url:str) -> Index:
+    """crawl the website and create an index
+
+    Args:
+        url (str): the url to start crawling from
+
+    Returns:
+        Index: the created index
+    """
 
     start_server = re.search(r'\/\/([^/]+)', url).group(1) #get the server of the url to avoid crawling other servers
     print("setting the start server to: ", start_server)
@@ -82,7 +86,6 @@ def crawl(url:str) -> None:
 
             if r.status_code == 200:
                 soup = bs4.BeautifulSoup(r.content, 'html.parser') #parse the content of the website
-                print(soup.body.get_text(separator=' '))
 
                 writer.add_document(title= soup.title.text, content=soup.body.get_text(separator=' '), url=current_url) #add the document to the index
 
@@ -102,11 +105,25 @@ def search(query:str) -> list:
         query (str): the query to be searched for
     """
 
+    class CustomFormatter(highlight.Formatter):
+        """Mark the matched terms in orange"""
+
+        def format_token(self, text, token, replace=False):
+            """ Overwrite the format_token function to mark the matched terms in orange
+            """
+            # Use the get_text function to get the text corresponding to the token
+            tokentext = highlight.get_text(text, token, replace)
+
+            # Return the text in orange
+            return '<span style="color: #ffd500;">%s</span>' % tokentext
+
+
     index = open_dir("indexdir")
     out = []
     
     with index.searcher() as searcher:
-        corrector = searcher.corrector("content")
+
+        corrector = searcher.corrector("content") # Create a corrector for the "content" field
 
         p_query = QueryParser("content", index.schema).parse(query)
         querylist = query.split()
@@ -124,6 +141,8 @@ def search(query:str) -> list:
             p_query = p_query.replace("content", term[1], corrected_term)  # Replace the term with a new Term object
       
         result = searcher.search(p_query, terms = True)
+        result.formatter =CustomFormatter() # Use the CustomFormatter to highlight the matched terms in orange
+
         #sort result by how often the search terms are mentioned
         result = sorted(result, key=lambda x: sum(x['content'].lower().count(q) for q in querylist), reverse=True)
 
@@ -138,12 +157,9 @@ def search(query:str) -> list:
                 'url': r['url']
             })
             
-
     return out
 
 if __name__ == '__main__':
-
-    nltk.download('stopwords')
 
     crawl('https://vm009.rz.uos.de/crawl/index.html')  
 
